@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NEU Library Register</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- LEFT SIDE -->
+  <div class="left">
+    <div class="overlay">
+      <h1>📚 NEU Library</h1>
+      <p>Access knowledge. Build your future.</p>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="right">
+    <div class="form-box">
+
+      <div class="top-text">
+        <a href="login.html">Sign In</a>
+      </div>
+
+      <h2>Create Account</h2>
+
+      <!-- FLOATING INPUT -->
+      <div class="input-group">
+        <input type="text" id="name" required>
+        <label>Full Name</label>
+      </div>
+
+      <div class="input-group">
+        <input type="email" id="email" required>
+        <label>Email Address</label>
+      </div>
+
+      <div class="input-group">
+        <select id="course" required>
+          <option value="" disabled selected></option>
+          <option value="BSIT">BSIT</option>
+          <option value="BSBA">BSBA</option>
+          <option value="BSED">BSED</option>
+          <option value="HUMSS">HUMSS</option>
+        </select>
+        <label class="select-label">Course</label>
+      </div>
+
+      <div class="input-group">
+        <input type="password" id="password" required>
+        <label>Password</label>
+      </div>
+
+      <button id="registerBtn">Create Account</button>
+
+    </div>
+  </div>
+
+</div>
+
+<script type="module" src="register.js"></script>
+</body>
+</html>

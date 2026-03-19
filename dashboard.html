@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NEU Library Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* GENERAL BODY */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 40px 30px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h1 {
+      color: #1e3a8a;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      color: #1e40af;
+      font-size: 20px;
+      margin: 20px 0 10px;
+    }
+
+    /* SELECT DROPDOWN */
+    select {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      font-size: 16px;
+      transition: all 0.3s;
+      margin-bottom: 20px;
+    }
+
+    select:focus {
+      border-color: #1e3a8a;
+      outline: none;
+      box-shadow: 0 0 6px rgba(30,58,138,0.3);
+    }
+
+    /* BUTTONS */
+    button {
+      width: 48%;
+      padding: 12px 0;
+      margin: 5px 1%;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #fff;
+    }
+
+    #checkInBtn {
+      background-color: #3b82f6;
+    }
+
+    #checkOutBtn {
+      background-color: #ef4444;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* SMALL DEVICES */
+    @media screen and (max-width: 600px) {
+      .container {
+        width: 90%;
+        padding: 30px 20px;
+      }
+      button {
+        width: 100%;
+        margin: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Welcome to NEU Library!</h1>
+
+  <h3>Visitor Log</h3>
+  <p>Select your reason for visit:</p>
+  <select id="reason">
+    <option value="Reading">📚 Reading</option>
+    <option value="Research">🔬 Research</option>
+    <option value="Computer Use">💻 Computer Use</option>
+  </select>
+
+  <div>
+    <button id="checkInBtn">Time-In</button>
+    <button id="checkOutBtn">Log-Out</button>
+  </div>
+</div>
+
+<script type="module" src="dashboard.js"></script>
+</body>
+</html>

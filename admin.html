@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NEU Admin Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body {margin:0; display:flex; font-family:'Segoe UI',sans-serif; background:#eef2f7;}
+
+/* SIDEBAR */
+.sidebar {
+  width: 250px; background:#1e3a8a; color:white; height:100vh; padding:20px; display:flex; flex-direction:column;
+  transition: width 0.3s;
+}
+.sidebar h2 { text-align:center; margin-bottom:40px; }
+.menu-item {
+  padding:12px 15px; margin-bottom:12px; border-radius:10px; cursor:pointer; transition:0.3s; font-size:15px;
+}
+.menu-item:hover { background:rgba(255,255,255,0.15); }
+.menu-item.active { background:white; color:#1e3a8a; font-weight:600; box-shadow:0 3px 6px rgba(0,0,0,0.2); }
+
+/* MAIN */
+.main { flex:1; padding:30px 40px; transition: margin-left 0.3s; }
+
+/* NAVBAR */
+.navbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; }
+.navbar h1 { margin:0; }
+.admin-info { background:white; padding:10px 15px; border-radius:8px; font-size:14px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+.logout-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #ef4444;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.logout-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+/* STATS */
+.stats { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:35px; }
+.card {
+  flex:1; min-width:200px; padding:25px; border-radius:12px; color:white; text-align:center;
+  transition:0.3s; cursor:pointer;
+}
+.card:hover { transform:translateY(-5px); box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+.card:nth-child(1){ background:linear-gradient(135deg,#3b82f6,#1e3a8a); }
+.card:nth-child(2){ background:linear-gradient(135deg,#22c55e,#15803d); }
+.card:nth-child(3){ background:linear-gradient(135deg,#f59e0b,#b45309); }
+.card:nth-child(4){ background:linear-gradient(135deg,#ec4899,#be185d); }
+
+/* CHART */
+.chart-container { 
+  background:white; 
+  padding:25px; 
+  border-radius:12px; 
+  box-shadow:0 4px 12px rgba(0,0,0,0.08); 
+  margin-bottom:25px;
+}
+.chart-container h3 { 
+  text-align:center; 
+  margin-bottom:20px; 
+  color:#1e3a8a; 
+  font-size:18px;
+}
+
+/* TABLES */
+.table-box { flex:1; background:white; padding:20px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); margin-bottom:25px; display:flex; flex-direction:column; }
+.table-box h2 { margin-bottom:15px; }
+.table-scroll { max-height:320px; overflow-y:auto; }
+table { width:100%; border-collapse:collapse; }
+th { position:sticky; top:0; background:#1e3a8a; color:white; font-weight:600; padding:15px 12px; }
+th,td{ padding:12px; text-align:left; border-bottom:1px solid #f1f5f9; }
+tr:hover { background:#f8fafc; }
+
+/* FILTER */
+.filter-box { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
+.filter-box input, .filter-box select { 
+  padding:10px 14px; 
+  border-radius:8px; 
+  border:1px solid #d1d5db; 
+  font-size:14px; 
+  background:white;
+  min-width:150px;
+}
+.filter-box button { 
+  padding:10px 20px; 
+  border:none; 
+  border-radius:8px; 
+  cursor:pointer; 
+  font-size:14px; 
+  font-weight:600;
+  transition:0.2s; 
+}
+#clearFilters{ background:#ef4444; color:white; }
+#clearFilters:hover{ background:#dc2626; transform:translateY(-1px); }
+.filter-box span { 
+  padding:10px 8px; 
+  color:#6b7280; 
+  font-size:13px; 
+  font-weight:500;
+  white-space:nowrap;
+}
+
+/* STATUS */
+.status-in { color:#f59e0b; font-weight:600; }
+.status-out { color:#10b981; }
+
+/* GRID LAYOUT */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 30px; }
+.charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 25px; }
+
+/* RESPONSIVE */
+@media(max-width:1200px){
+  .charts-grid { grid-template-columns: 1fr; }
+}
+@media(max-width:900px){
+  body{ flex-direction:column; }
+  .sidebar{ width:100%; height:auto; }
+  .stats, .stats-grid { flex-direction:column; }
+}
+
+/* BLOCKED USER STYLE */
+.blocked { background:#fee2e2 !important; }
+.block-btn { padding:4px 8px; border:none; border-radius:4px; cursor:pointer; font-weight:600; }
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>NEU Admin</h2>
+  <div class="menu">
+    <div class="menu-item active" data-page="dashboard">📊 Dashboard</div>
+    <div class="menu-item" data-page="users">👥 Users</div>
+    <div class="menu-item" data-page="logs">📋 Logs</div>
+    <div class="menu-item" data-page="statistics">📈 Statistics</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="navbar">
+    <h1>Admin Dashboard</h1>
+    <div style="display:flex; align-items:center; gap:15px;">
+      <div class="admin-info">👤 Admin</div>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div id="dashboardPage" class="page">
+    <div class="stats">
+      <div class="card">
+        <h2 id="totalVisitors">0</h2><p>Visitors Today</p>
+      </div>
+      <div class="card">
+        <h2 id="insideLibrary">0</h2><p>Inside Library</p>
+      </div>
+      <div class="card">
+        <h2 id="totalCheckinsMonth">0</h2><p>This Month</p>
+      </div>
+      <div class="card">
+        <h2 id="topReason">-</h2><p>Top Reason</p>
+      </div>
+    </div>
+    <div class="chart-container" style="max-width:700px; height:400px; margin:auto;">
+      <h3>Visitor Reasons Today</h3>
+      <canvas id="reasonChart"></canvas>
+    </div>
+  </div>
+
+  <!-- USERS PAGE -->
+  <div id="usersPage" class="page" style="display:none;">
+    <div class="table-box">
+      <h2>👥 Registered Users</h2>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Course</th>
+              <th>Total Visits</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="userTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGS PAGE -->
+  <div id="logsPage" class="page" style="display:none;">
+    <div class="table-box">
+      <h2>📋 Visitor Logs</h2>
+      <div class="filter-box">
+        <input type="text" id="searchEmail" placeholder="🔍 Search email">
+        <select id="filterReason">
+          <option value="">All Reasons</option>
+          <option value="Reading">📚 Reading</option>
+          <option value="Research">🔬 Research</option>
+          <option value="Computer Use">💻 Computer Use</option>
+        </select>
+        <input type="date" id="filterDate" placeholder="Exact Date">
+        <input type="date" id="dateFrom" placeholder="From Date">
+        <span>to</span>
+        <input type="date" id="dateTo" placeholder="To Date">
+        <button id="clearFilters">🗑️ Clear</button>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Reason</th>
+              <th>Time In</th>
+              <th>Log Out</th>
+            </tr>
+          </thead>
+          <tbody id="logTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATISTICS PAGE -->
+  <div id="statisticsPage" class="page" style="display:none;">
+    <div class="stats-grid">
+      <div class="card">
+        <h2 id="peakHour">12:00</h2>
+        <p>🕒 Peak Hour</p>
+      </div>
+      <div class="card">
+        <h2 id="avgStay">45</h2>
+        <p>⏱️ Avg Stay (min)</p>
+      </div>
+      <div class="card">
+        <h2 id="peakDay">-</h2>
+        <p>📅 Peak Day</p>
+      </div>
+      <div class="card">
+        <h2 id="retentionRate">0%</h2>
+        <p>🔄 Repeat Visitors</p>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-container" style="height:400px;">
+        <h3>📈 Monthly Trend</h3>
+        <canvas id="monthlyTrendChart"></canvas>
+      </div>
+      <div class="chart-container" style="height:400px;">
+        <h3>🕒 Hourly Usage</h3>
+        <canvas id="hourlyChart"></canvas>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-container" style="height:400px;">
+        <h3>📊 Reason Breakdown</h3>
+        <canvas id="reasonStatsChart"></canvas>
+      </div>
+      <div class="chart-container" style="height:400px;">
+        <h3>📅 Weekly Pattern</h3>
+        <canvas id="weeklyChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>
